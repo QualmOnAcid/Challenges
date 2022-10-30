@@ -1,0 +1,16 @@
+plugin-version: 1.0.0
+
+timer:
+  time: 0
+  reversed: false
+  messages:
+    timer-prefix: "§e§l" #DO NOT CHANGE THIS VALUE!
+    timer-paused: "Der Timer ist pausiert. §f(<time>)"
+    timer-reverse-expire: "§e§lChallenges §7§l» §fDie Zeit ist abgelaufen"
+    timer-running: "<time>"
+    timer-syntax: "§e§lChallenges §7§l» §fPlease use /timer <resume/pause/reset/reverse>"
+    timer-resumed-cmd: "§e§lChallenges §7§l» §fDu hast den Timer fortgesetzt"
+    timer-paused-cmd: "§e§lChallenges §7§l» §fDu hast den Timer pausiert"
+    timer-reversed-cmd: "§e§lChallenges §7§l» §fDu hast den Timer umgekehrt"
+  gui:
+    "title": "§fTimer §8• §fSettings"

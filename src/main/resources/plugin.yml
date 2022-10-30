@@ -1,0 +1,7 @@
+name: Challenges
+version: '${project.version}'
+main: challenges.challenges.Challenges
+api-version: 1.19
+
+commands:
+  timer:

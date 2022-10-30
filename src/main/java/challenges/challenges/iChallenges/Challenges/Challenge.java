@@ -1,56 +1,61 @@
-package challenges.challenges.iChallenges.Settings;
+package challenges.challenges.iChallenges.Challenges;
 
 import challenges.challenges.Challenges;
 import challenges.challenges.Utils.Items.ItemBuilder;
+import challenges.challenges.iChallenges.Settings.ISetting;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.event.Listener;
 import org.bukkit.inventory.ItemStack;
 
-import java.lang.reflect.Array;
 import java.util.*;
 
-public abstract class Setting implements Listener, ISetting {
+public abstract class Challenge implements Listener, IChallenge {
 
-    protected Setting instance;
+    protected Challenge instance;
     protected String name;
     protected String description;
     protected Material guiMaterial;
     protected boolean isEnabled;
     protected LinkedHashMap<String, Object> varsToSave = new LinkedHashMap<>();
 
-    public Setting(String name, String description, Material guiMaterial, boolean firstValue) {
+    public boolean isEnabled() {
+        return isEnabled;
+    }
+
+    public Challenge(String name, String description, Material guiMaterial, boolean firstValue) {
         instance = this;
         this.name = name;
         this.description = description;
         this.guiMaterial = guiMaterial;
-        if(!Challenges.getInstance().getConfig().contains("settings." + name + ".enabled")) {
-            Challenges.getInstance().getConfig().set("settings." + name + ".enabled", firstValue);
+        if(!Challenges.getInstance().getConfig().contains("challenges." + name + ".enabled")) {
+            Challenges.getInstance().getConfig().set("challenges." + name + ".enabled", firstValue);
         }
-        isEnabled = Challenges.getInstance().getConfig().getBoolean("settings." + name + ".enabled");
+        isEnabled = Challenges.getInstance().getConfig().getBoolean("challenges." + name + ".enabled");
         Bukkit.getPluginManager().registerEvents(this, Challenges.getInstance());
     }
 
     @Override
     public void load() {
         for(Map.Entry<String, Object> entry : varsToSave.entrySet()) {
-            if(!Challenges.getInstance().getConfig().contains("settings." + name + "." + entry.getKey())) {
-                Challenges.getInstance().getConfig().set("settings." + name + "." + entry.getKey(), entry.getValue());
+            if(!Challenges.getInstance().getConfig().contains("challenges." + name + "." + entry.getKey())) {
+                Challenges.getInstance().getConfig().set("challenges." + name + "." + entry.getKey(), entry.getValue());
             }
         }
+        System.out.println("[" + getName() + "] Loaded successfully.");
     }
 
     @Override
     public void save() {
         for(Map.Entry<String, Object> entry : varsToSave.entrySet()) {
             System.out.println(entry.getKey() + " | " + entry.getValue());
-                Challenges.getInstance().getConfig().set("settings." + name + "." + entry.getKey(), entry.getValue());
+            Challenges.getInstance().getConfig().set("challenges." + name + "." + entry.getKey(), entry.getValue());
         }
-        Challenges.getInstance().getConfig().set("settings." + name + ".enabled", isEnabled);
+        Challenges.getInstance().getConfig().set("challenges." + name + ".enabled", isEnabled);
     }
 
 
-    public Setting getInstance() {
+    public Challenge getInstance() {
         return instance;
     }
 
@@ -66,8 +71,6 @@ public abstract class Setting implements Listener, ISetting {
         return guiMaterial;
     }
 
-    public boolean isEnabled() {return isEnabled;}
-
     public LinkedHashMap<String, Object> getVarsToSave() {
         return varsToSave;
     }
@@ -75,7 +78,6 @@ public abstract class Setting implements Listener, ISetting {
     public ItemStack getGUIItem() {
         ArrayList<String> lore = new ArrayList<>();
         lore.add("");
-        //lore.add("§7" + getDescription());
 
         List<String> descParts = Arrays.asList(getDescription().split("\n"));
         for(String descPart : descParts) {

@@ -13,4 +13,4 @@ timer:
     timer-paused-cmd: "§e§lChallenges §7§l» §fDu hast den Timer pausiert"
     timer-reversed-cmd: "§e§lChallenges §7§l» §fDu hast den Timer umgekehrt"
   gui:
-    "title": "§fTimer §8• §fSettings"
+    "title": "§e§lTimer §8§l» §fSettings"

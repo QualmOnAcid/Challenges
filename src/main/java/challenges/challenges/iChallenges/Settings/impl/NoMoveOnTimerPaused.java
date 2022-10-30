@@ -29,8 +29,10 @@ public class NoMoveOnTimerPaused extends Setting {
     @EventHandler
     public void OnMove(PlayerMoveEvent e) {
         if(isEnabled) {
-            if(Challenges.getTimer().getTimerState() == TimerState.PAUSED && e.getPlayer().getGameMode() == GameMode.SURVIVAL)
-                e.setCancelled(true);
+            if(Challenges.getTimer().getTimerState() == TimerState.PAUSED && e.getPlayer().getGameMode() == GameMode.SURVIVAL) {
+                if(e.getFrom().getBlockX() != e.getTo().getBlockX() || e.getFrom().getBlockY() != e.getTo().getBlockY() || e.getFrom().getBlockZ() != e.getTo().getBlockZ())
+                    e.setCancelled(true);
+            }
         }
     }
 

@@ -2,6 +2,7 @@ package challenges.challenges.Utils.Timer;
 
 import challenges.challenges.Challenges;
 import challenges.challenges.Enums.TimerState;
+import challenges.challenges.Utils.Heads.Heads;
 import challenges.challenges.Utils.Items.ItemBuilder;
 import challenges.challenges.Utils.Utils;
 import org.bukkit.Bukkit;
@@ -55,8 +56,8 @@ public class TimerGUI implements Listener {
         return output;
     }
 
-    private void Build() {
-        Utils.FillInventoryWithMaterial(timerInventory, Material.BLACK_STAINED_GLASS_PANE, 0);
+    private void Build(boolean placeArrow) {
+        Utils.FillInventoryWithMaterial(timerInventory, Material.BLACK_STAINED_GLASS_PANE);
         ItemStack stateItem = new ItemStack(Material.RED_DYE);
         ItemStack reverseItem = new ItemStack(Material.ARROW);
         if(Challenges.getTimer().getTimerState() == TimerState.RUNNING) {
@@ -73,10 +74,18 @@ public class TimerGUI implements Listener {
         timerInventory.setItem(13, colorItem);
         timerInventory.setItem(11, stateItem);
         timerInventory.setItem(15, reverseItem);
+        if(placeArrow) {
+            timerInventory.setItem(18, Heads.Back());
+        }
     }
 
     public Inventory getTimerInventory() {
-        Build();
+        Build(false);
+        return timerInventory;
+    }
+
+    public Inventory getTimerInventoryWithArrow() {
+        Build(true);
         return timerInventory;
     }
 
@@ -161,6 +170,12 @@ public class TimerGUI implements Listener {
                 Player p = (Player) e.getWhoClicked();
                 e.setCancelled(true);
                 int slot = e.getRawSlot();
+                Inventory timerInv = null;
+                if(e.getClickedInventory().getItem(18).getType() == Material.BLACK_STAINED_GLASS_PANE) {
+                    timerInv = getTimerInventory();
+                } else {
+                    timerInv = getTimerInventoryWithArrow();
+                }
                 switch (slot) {
                     case 11:
                     if(Challenges.getTimer().getTimerState() == TimerState.RUNNING) {
@@ -180,7 +195,7 @@ public class TimerGUI implements Listener {
                             a.sendTitle(ChatColor.GREEN + "Timer", "fortgesetzt", 20, 50, 20);
                         }
                     }
-                    p.openInventory(getTimerInventory());
+                        p.openInventory(timerInv);
                         p.playSound(p.getLocation(), Sound.BLOCK_BAMBOO_BREAK, 3, -5);
                     break;
                     case 13:
@@ -193,7 +208,7 @@ public class TimerGUI implements Listener {
                         getTimerInventoryDontBuild().setItem(13, s);
                         Challenges.getInstance().getConfig().set("timer.messages.timer-prefix", j);
 
-                        p.openInventory(getTimerInventory());
+                        p.openInventory(timerInv);
                         p.playSound(p.getLocation(), Sound.BLOCK_BAMBOO_BREAK, 3, 5);
                         break;
                     case 15:
@@ -214,8 +229,39 @@ public class TimerGUI implements Listener {
                                 a.sendTitle(ChatColor.YELLOW + "Timer", "zählt runter", 20, 50, 20);
                             }
                         }
-                        p.openInventory(getTimerInventory());
+                        p.openInventory(timerInv);
                         p.playSound(p.getLocation(), Sound.BLOCK_BAMBOO_BREAK, 3, -5);
+                        break;
+                    case 18:
+                        if(e.getCurrentItem() != null && e.getCurrentItem().getType() != Material.BLACK_STAINED_GLASS_PANE) {
+                            Inventory settingsInventory = Bukkit.createInventory(null, 9*3, "§e§lChallenges §8§l» §7Menü");
+                            Utils.FillInventoryWithMaterial(settingsInventory, Material.BLACK_STAINED_GLASS_PANE);
+
+                            ItemStack challengeStack = new ItemBuilder(Material.EMERALD)
+                                    .setDisplayName("§8§l» §e§lChallenges")
+                                    .build();
+
+                            ItemStack goalStack = new ItemBuilder(Material.HOPPER)
+                                    .setDisplayName("§8§l» §e§lZiele")
+                                    .build();
+
+                            ItemStack settingsStack = new ItemBuilder(Material.BEACON)
+                                    .setDisplayName("§8§l» §e§lSettings")
+                                    .build();
+
+                            ItemStack timerStack = new ItemBuilder(Material.CLOCK)
+                                    .setDisplayName("§8§l» §e§lTimer")
+                                    .build();
+
+                            settingsInventory.setItem(10, challengeStack);
+                            settingsInventory.setItem(12, goalStack);
+                            settingsInventory.setItem(14, settingsStack);
+                            settingsInventory.setItem(16, timerStack);
+
+
+                            p.openInventory(settingsInventory);
+                            p.playSound(p.getLocation(), Sound.BLOCK_BAMBOO_BREAK, 3, 5);
+                        }
                         break;
                     default:
                         break;
